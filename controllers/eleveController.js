@@ -43,7 +43,7 @@ exports.createEleve = async (req, res) => {
       email,
       nompere,
       nomMere,
-      payee: payee !== undefined ? payee : true,
+      payee: false,
       inscrit: inscrit !== undefined ? inscrit : true,
       typePaiement,
       dateDebutPaiement,
@@ -112,6 +112,61 @@ exports.getAllElevesPayee = async (req, res) => {
   try {
     const elevesPayee = await Eleve.find({ payee: true }); // Récupérer tous les Eleves ayant "payee" égal à true
     res.status(200).json(elevesPayee);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+// Mettre à jour "payee" à true pour un élève donné
+exports.markEleveAsPayee = async (req, res) => {
+  try {
+    const eleveId = req.params.id;
+
+    const updatedEleve = await Eleve.findByIdAndUpdate(
+      eleveId,
+      { payee: true },
+      { new: true }
+    );
+
+    if (!updatedEleve)
+      return res.status(404).json({ message: "Élève introuvable" });
+
+    res.status(200).json({
+      message: "Élève marqué comme payé avec succès",
+      eleve: updatedEleve,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.getTotalPaiementMois = async (req, res) => {
+  try {
+    const result = await Eleve.aggregate([
+      { $match: { typePaiement: 'mois' } },
+      { $group: { _id: null, total: { $sum: "$montantPaiement" } } }
+    ]);
+    res.status(200).json({ type: 'mois', total: result[0]?.total || 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.getTotalPaiementSemestre = async (req, res) => {
+  try {
+    const result = await Eleve.aggregate([
+      { $match: { typePaiement: 'semestre' } },
+      { $group: { _id: null, total: { $sum: "$montantPaiement" } } }
+    ]);
+    res.status(200).json({ type: 'semestre', total: result[0]?.total || 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.getTotalPaiementAnnee = async (req, res) => {
+  try {
+    const result = await Eleve.aggregate([
+      { $match: { typePaiement: 'année' } },
+      { $group: { _id: null, total: { $sum: "$montantPaiement" } } }
+    ]);
+    res.status(200).json({ type: 'année', total: result[0]?.total || 0 });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

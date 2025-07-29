@@ -16,5 +16,9 @@ router.put('/:id', eleveController.updateEleveById);
 
 // Delete Eleve by ID
 router.delete('/:id', eleveController.deleteEleveById);
+router.put('/:id/mark-paid',eleveController.markEleveAsPayee);
+router.get('/somme/mois', eleveController.getTotalPaiementMois);
+router.get('/somme/semestre', eleveController.getTotalPaiementSemestre);
+router.get('/somme/annee', eleveController.getTotalPaiementAnnee);
 
 module.exports = router;

@@ -27,35 +27,41 @@ exports.register = async (req, res) => {
   }
 };
 
-// Login
+
+// Login Controller
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check user
+    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user)
+      return res.status(404).json({ message: 'Utilisateur introuvable' });
 
     // Validate password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isMatch)
+      return res.status(400).json({ message: 'Email ou mot de passe incorrect' });
 
-    // Generate JWT
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1d' });
-
-    // Set token in cookies
-    res.cookie('token', token, {
-      httpOnly: true,    // Prevents JavaScript from accessing the cookie
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+      expiresIn: '1d',
     });
 
-    res.status(200).json({ message: 'Login successful' });
+    // Set cookie with token
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // true only in production (HTTPS)
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
+    // Respond with success
+    res.status(200).json({ message: 'Connexion réussie' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message || 'Erreur serveur' });
   }
 };
-
 // Logout (client should handle token removal)
 exports.logout = (req, res) => {
   res.clearCookie('token'); // Clear the token cookie

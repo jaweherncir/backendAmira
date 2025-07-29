@@ -56,7 +56,7 @@ const eleveSchema = new mongoose.Schema({
   },
   payee: {
     type: Boolean,
-    default: true
+    default: false
   },
   inscrit: {
     type: Boolean,
@@ -84,7 +84,7 @@ const eleveSchema = new mongoose.Schema({
   ,
   montantPaiement: {
     type: Number,
-    required: true
+  
   }
 
 }, {
