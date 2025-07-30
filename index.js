@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json()); // For parsing application/json
 app.use(cookieParser()); // For parsing cookies
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', // Replace with your front-end URL
+  origin: 'http://localhost:4000', // Replace with your front-end URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Enable credentials if you need to send cookies in requests
 }));
