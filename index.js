@@ -19,15 +19,11 @@ app.use(cookieParser()); // For parsing cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Enable credentials if you need to send cookies in requests
 }));*/
-const cors = require('cors');
-
 app.use(cors({
   origin: 'https://edu-meeting.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
-
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/eleves', eleveRoutes);
