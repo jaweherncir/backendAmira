@@ -14,11 +14,19 @@ const app = express();
 // Middlewares
 app.use(express.json()); // For parsing application/json
 app.use(cookieParser()); // For parsing cookies
-app.use(cors({
+/*app.use(cors({
   origin: 'http://localhost:4000', // Replace with your front-end URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Enable credentials if you need to send cookies in requests
+}));*/
+const cors = require('cors');
+
+app.use(cors({
+  origin: 'https://edu-meeting.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
+
 
 // Routes
 app.use('/api/auth', authRoutes);
